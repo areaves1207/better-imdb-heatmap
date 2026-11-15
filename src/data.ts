@@ -2,13 +2,14 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@supabase/supabase-js'
 import type { ShowData, ShowSummary } from './types.ts'
 
-// Public values: the anon/publishable key can only read, thanks to the RLS policies in
-// supabase/schema.sql. They're set in .env (committed).
+// Public values baked in at build time: the anon/publishable key can only read, thanks to the
+// RLS policies in supabase/schema.sql. Locally they come from .env; in CI from GitHub
+// Actions variables or secrets (see .github/workflows/deploy.yml).
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string | undefined
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_KEY as string | undefined
 
 export const configError =
-  !SUPABASE_URL || !SUPABASE_KEY ? 'VITE_SUPABASE_URL and VITE_SUPABASE_KEY are not set in .env' : null
+  !SUPABASE_URL || !SUPABASE_KEY ? 'Supabase URL/key were missing when the site was built' : null
 
 const supabase = configError ? null : createClient(SUPABASE_URL!, SUPABASE_KEY!)
 
