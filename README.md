@@ -1,15 +1,41 @@
 # Episode Heatmap
 
-A heatmap of IMDb episode ratings for TV shows, season by season. Built with Vite, React and TypeScript, and hosted for free on GitHub Pages.
+A heatmap of IMDb episode ratings for TV shows, season by season. Built with Vite, React and TypeScript, with data in Supabase and the site hosted on GitHub Pages.
 
 ## How it works
 
-There's no backend and no API key.
+```
+"Refresh data" workflow (daily)                    "Deploy site" workflow (on push)
+  download IMDb datasets                             build the React app
+  join them (scripts/build-data.ts)                  publish to GitHub Pages
+  replace the data in Supabase
+              │                                                │
+              ▼                                                ▼
+        Supabase Postgres  ◄──── browser queries data ──── GitHub Pages site
+```
 
-1. `scripts/build-data.ts` downloads IMDb's free [non-commercial datasets](https://data.imdb.com/non-commercial-datasets/) (`title.ratings`, `title.episode`, `title.basics`) and joins them.
-2. It writes `public/data/index.json` (search index) and one `public/data/shows/<imdb-id>.json` per show. Shows with fewer than 1,000 votes are skipped.
-3. The React app loads the search index once, then fetches a show's small JSON file when you open it. Posters come from the [TVmaze API](https://www.tvmaze.com/api) in the browser.
-4. A GitHub Action reruns all of this every day and redeploys, so ratings stay current.
+- **Data:** IMDb's free [non-commercial datasets](https://data.imdb.com/non-commercial-datasets/) (`title.ratings`, `title.episode`, `title.basics`). Shows with fewer than 1,000 votes are skipped, which leaves ~12.7k shows and ~525k episodes.
+- **Database:** two tables (`shows`, `episodes`) plus three read-only functions the site calls: `search_shows`, `get_show`, `popular_shows`. See [`supabase/schema.sql`](supabase/schema.sql).
+- **Refresh:** each night the script deletes the old rows and bulk-loads fresh ones inside a single transaction. Visitors keep seeing the previous data until the new data is fully loaded, and a failed run changes nothing.
+- **Site:** static files on GitHub Pages. The browser talks to Supabase directly with the public key, which can only read. Posters come from the [TVmaze API](https://www.tvmaze.com/api).
+
+## Setup
+
+### 1. Supabase
+
+1. Create a project at [supabase.com](https://supabase.com).
+2. In **SQL Editor**, paste the contents of `supabase/schema.sql` and run it.
+3. From **Connect → Session pooler**, copy the connection URI and fill in your database password. If the password has special characters, URL-encode them (`@` → `%40`, `#` → `%23`, `/` → `%2F`).
+
+### 2. GitHub
+
+1. **Secret for the data job:** repo **Settings → Secrets and variables → Actions → New repository secret**, named `SUPABASE_DB_URL`, with the URI from above.
+2. **Public settings for the site:** put your project URL and anon/publishable key in [`.env`](.env) and commit it. Both are under Supabase **Project Settings → API**. These are safe to commit: the database rules only allow reading.
+3. **Pages:** **Settings → Pages → Source: GitHub Actions**.
+4. **Load the data:** **Actions → Refresh data → Run workflow** (takes a few minutes). After that it runs daily at 06:00 UTC.
+5. **Deploy:** happens on every push to `main`, or **Actions → Deploy site → Run workflow**. The site is at `https://<your-username>.github.io/<repo-name>/`.
+
+> GitHub pauses scheduled workflows in public repos after 60 days with no commits, and Supabase pauses free projects after a week without activity. The daily refresh keeps Supabase active; if ratings stop updating, re-enable the workflow from the Actions tab.
 
 ## Running locally
 
@@ -17,31 +43,16 @@ Requires Node 22+.
 
 ```bash
 npm install
-npm run data   # ~1 minute: downloads ~270 MB into .cache/ and writes public/data/
-npm run dev    # http://localhost:5173
+npm run dev    # http://localhost:5173, uses the Supabase settings in .env
 ```
 
-`npm run data` reuses downloads less than 20 hours old. Options: `MIN_SERIES_VOTES=500 npm run data` to include more shows, `FORCE_DOWNLOAD=1` to refetch.
+To load data from your machine, put the connection string in `.env.local` (gitignored):
 
-## Deploying to GitHub Pages (one-time setup)
+```
+SUPABASE_DB_URL=postgresql://postgres.<project-ref>:<password>@aws-0-<region>.pooler.supabase.com:5432/postgres
+```
 
-1. **Create the repo.** On github.com click **+ → New repository**. Name it (e.g. `imdb-heatmap`), make it **Public** (Pages is free for public repos), and *don't* add a README, .gitignore or license. This project already has them.
-2. **Push this folder.** From this folder:
-   ```bash
-   git init
-   git add .
-   git commit -m "Initial commit"
-   git branch -M main
-   git remote add origin https://github.com/<your-username>/<repo-name>.git
-   git push -u origin main
-   ```
-3. **Turn on Pages.** In the repo go to **Settings → Pages**. Under **Build and deployment → Source**, choose **GitHub Actions**. That's the only setting.
-4. **Run the workflow.** Pushing already started it, but it fails if Pages wasn't on yet. Go to the **Actions** tab, select **Build data and deploy**, and click **Run workflow**. It takes about 3 minutes.
-5. **Visit the site** at `https://<your-username>.github.io/<repo-name>/`. The link also appears on the workflow run and under Settings → Pages.
-
-After that, every push to `main` redeploys, and the site rebuilds daily at 06:00 UTC with fresh ratings.
-
-> GitHub pauses scheduled workflows in public repos after 60 days with no commits. If ratings stop updating, re-enable the workflow from the Actions tab (or just push a commit).
+then run `npm run data`. It downloads ~270 MB into `.cache/` (reused for 20 hours). Options: `DRY_RUN=1` to build without touching the database, `MIN_SERIES_VOTES=500` to include more shows, `FORCE_DOWNLOAD=1` to refetch.
 
 ## Data license
 

@@ -1,4 +1,4 @@
-// Shapes of the generated files in public/data. Shared by the build script and the app.
+// Shapes returned by the Supabase functions in supabase/schema.sql.
 
 export interface Episode {
   /** Episode number within the season */
@@ -15,6 +15,7 @@ export interface Season {
   episodes: Episode[]
 }
 
+/** Returned by get_show(): a show with all its seasons and episodes */
 export interface ShowData {
   id: string
   title: string
@@ -25,10 +26,12 @@ export interface ShowData {
   seasons: Season[]
 }
 
-/** [id, title, startYear, endYear, votes, rating] — tuple keeps the search index small */
-export type IndexEntry = [string, string, number | null, number | null, number, number | null]
-
-export interface SearchIndex {
-  generated: string
-  shows: IndexEntry[]
+/** A row of the shows table, returned by search_shows() and popular_shows() */
+export interface ShowSummary {
+  id: string
+  title: string
+  start_year: number | null
+  end_year: number | null
+  rating: number | null
+  votes: number
 }

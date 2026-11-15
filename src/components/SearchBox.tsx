@@ -1,19 +1,16 @@
-import { useId, useMemo, useState } from 'react'
+import { useId, useState } from 'react'
 import { useNavigate } from 'react-router'
-import { formatYears, searchShows, useSearchIndex } from '../data.ts'
+import { configError, formatYears, useSearch } from '../data.ts'
 
 export function SearchBox({ autoFocus = false }: { autoFocus?: boolean }) {
-  const index = useSearchIndex()
   const navigate = useNavigate()
   const listId = useId()
   const [query, setQuery] = useState('')
   const [active, setActive] = useState(0)
   const [open, setOpen] = useState(false)
 
-  const results = useMemo(
-    () => (index.status === 'ready' ? searchShows(index.data.shows, query) : []),
-    [index, query],
-  )
+  const search = useSearch(query)
+  const results = search.status === 'ready' ? search.data : []
 
   const go = (id: string) => {
     setQuery('')
@@ -31,7 +28,7 @@ export function SearchBox({ autoFocus = false }: { autoFocus?: boolean }) {
       setActive((a) => (a - 1 + results.length) % results.length)
     } else if (e.key === 'Enter') {
       e.preventDefault()
-      go(results[active][0])
+      go(results[Math.min(active, results.length - 1)].id)
     } else if (e.key === 'Escape') {
       setOpen(false)
     }
@@ -48,8 +45,8 @@ export function SearchBox({ autoFocus = false }: { autoFocus?: boolean }) {
         aria-controls={listId}
         aria-activedescendant={showList && results.length ? `${listId}-${active}` : undefined}
         aria-label="Search TV shows"
-        placeholder={index.status === 'error' ? 'Search unavailable' : 'Search a TV show, e.g. Breaking Bad'}
-        disabled={index.status === 'error'}
+        placeholder={configError ? 'Search unavailable' : 'Search a TV show, e.g. Breaking Bad'}
+        disabled={!!configError}
         autoFocus={autoFocus}
         value={query}
         onChange={(e) => {
@@ -63,11 +60,12 @@ export function SearchBox({ autoFocus = false }: { autoFocus?: boolean }) {
       />
       {showList && (
         <ul className="search-results" id={listId} role="listbox">
-          {index.status === 'loading' && <li className="search-empty">Loading shows…</li>}
-          {index.status === 'ready' && results.length === 0 && (
+          {search.status === 'loading' && <li className="search-empty">Searching…</li>}
+          {search.status === 'error' && <li className="search-empty">Search failed: {search.error}</li>}
+          {search.status === 'ready' && results.length === 0 && (
             <li className="search-empty">No matching shows</li>
           )}
-          {results.map(([id, title, start, end, , rating], i) => (
+          {results.map(({ id, title, start_year, end_year, rating }, i) => (
             <li
               key={id}
               id={`${listId}-${i}`}
@@ -83,7 +81,7 @@ export function SearchBox({ autoFocus = false }: { autoFocus?: boolean }) {
             >
               <span className="search-title">{title}</span>
               <span className="search-meta">
-                {formatYears(start, end)}
+                {formatYears(start_year, end_year)}
                 {rating !== null && <> · ★ {rating.toFixed(1)}</>}
               </span>
             </li>

@@ -1,12 +1,12 @@
 import { Link, Route, Routes, useLocation } from 'react-router'
 import { SearchBox } from './components/SearchBox.tsx'
-import { useSearchIndex } from './data.ts'
+import { useRefreshedAt } from './data.ts'
 import { HomePage } from './pages/HomePage.tsx'
 import { ShowPage } from './pages/ShowPage.tsx'
 
 export default function App() {
   const { pathname } = useLocation()
-  const index = useSearchIndex()
+  const refreshed = useRefreshedAt()
   const onHome = pathname === '/'
 
   return (
@@ -46,8 +46,8 @@ export default function App() {
           </a>
           .
         </p>
-        {index.status === 'ready' && (
-          <p>Ratings updated {new Date(index.data.generated).toLocaleDateString()}.</p>
+        {refreshed.status === 'ready' && refreshed.data && (
+          <p>Ratings updated {refreshed.data.toLocaleDateString()}.</p>
         )}
       </footer>
     </div>

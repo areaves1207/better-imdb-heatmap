@@ -1,10 +1,10 @@
 import { useEffect } from 'react'
 import { Link } from 'react-router'
 import { SearchBox } from '../components/SearchBox.tsx'
-import { formatYears, useSearchIndex } from '../data.ts'
+import { formatYears, usePopularShows } from '../data.ts'
 
 export function HomePage() {
-  const index = useSearchIndex()
+  const popular = usePopularShows()
 
   useEffect(() => {
     document.title = 'Episode Heatmap'
@@ -20,20 +20,16 @@ export function HomePage() {
 
       <section>
         <h2>Most rated shows</h2>
-        {index.status === 'loading' && <p className="status">Loading…</p>}
-        {index.status === 'error' && (
-          <p className="status">
-            Couldn't load show data ({index.error}). If you're running locally, run <code>npm run data</code> first.
-          </p>
-        )}
-        {index.status === 'ready' && (
+        {popular.status === 'loading' && <p className="status">Loading…</p>}
+        {popular.status === 'error' && <p className="status">Couldn't load shows ({popular.error}).</p>}
+        {popular.status === 'ready' && (
           <ul className="popular">
-            {index.data.shows.slice(0, 24).map(([id, title, start, end, , rating]) => (
+            {popular.data.map(({ id, title, start_year, end_year, rating }) => (
               <li key={id}>
                 <Link to={`/show/${id}`}>
                   <span className="popular-title">{title}</span>
                   <span className="popular-meta">
-                    {formatYears(start, end)}
+                    {formatYears(start_year, end_year)}
                     {rating !== null && ` · ★ ${rating.toFixed(1)}`}
                   </span>
                 </Link>

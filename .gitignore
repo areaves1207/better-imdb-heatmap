@@ -23,6 +23,7 @@ dist-ssr
 *.sln
 *.sw?
 
-# Downloaded IMDb datasets and generated data
+# Downloaded IMDb datasets
 .cache/
-public/data/
+
+.env

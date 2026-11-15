@@ -1,0 +1,35 @@
+name: Refresh data
+
+# Downloads IMDb's datasets and replaces the data in Supabase.
+on:
+  schedule:
+    # Every day at 06:00 UTC (IMDb refreshes its datasets around midnight UTC)
+    - cron: '0 6 * * *'
+  workflow_dispatch: # adds a "Run workflow" button in the Actions tab
+
+permissions:
+  contents: read
+
+concurrency:
+  group: refresh-data
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Download IMDb data and load into Supabase
+        run: npm run data
+        env:
+          # Supabase session pooler URI, saved under Settings -> Secrets and variables -> Actions
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
