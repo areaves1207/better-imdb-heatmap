@@ -29,11 +29,15 @@ jobs:
 
       - run: npm ci
 
+      # Reports where Pages serves the site: base_path is "/<repo>" on <user>.github.io,
+      # and "" once a custom domain (e.g. heatmap.example.com) is set in Settings -> Pages.
+      - id: pages
+        uses: actions/configure-pages@v5
+
       - name: Build site
         run: npm run build
         env:
-          # Project sites live at https://<user>.github.io/<repo>/
-          BASE_PATH: /${{ github.event.repository.name }}/
+          BASE_PATH: ${{ steps.pages.outputs.base_path }}/
           # Public Supabase settings, from Settings -> Secrets and variables -> Actions.
           # Saved as either a variable or a secret; both work.
           VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL || secrets.VITE_SUPABASE_URL }}
