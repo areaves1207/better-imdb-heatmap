@@ -30,7 +30,7 @@ A heatmap of IMDb episode ratings for TV shows, season by season. Built with Vit
 ### 2. GitHub
 
 1. **Secret for the data job:** repo **Settings → Secrets and variables → Actions → New repository secret**, named `SUPABASE_DB_URL`, with the URI from above.
-2. **Public settings for the site:** put your project URL and anon/publishable key in [`.env`](.env) and commit it. Both are under Supabase **Project Settings → API**. These are safe to commit: the database rules only allow reading.
+2. **Public settings for the site:** on the same page, switch to the **Variables** tab and add `VITE_SUPABASE_URL` (`https://<project-ref>.supabase.co`) and `VITE_SUPABASE_KEY` (the publishable key, `sb_publishable_…`). Both are under Supabase **Project Settings → API Keys**. They're public by design; the database rules only allow reading. For local development, put the same two lines in `.env`.
 3. **Pages:** **Settings → Pages → Source: GitHub Actions**.
 4. **Load the data:** **Actions → Refresh data → Run workflow** (takes a few minutes). After that it runs daily at 06:00 UTC.
 5. **Deploy:** happens on every push to `main`, or **Actions → Deploy site → Run workflow**. The site is at `https://<your-username>.github.io/<repo-name>/`.

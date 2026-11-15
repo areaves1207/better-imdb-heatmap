@@ -34,6 +34,9 @@ jobs:
         env:
           # Project sites live at https://<user>.github.io/<repo>/
           BASE_PATH: /${{ github.event.repository.name }}/
+          # Public Supabase settings, from Settings -> Secrets and variables -> Actions -> Variables
+          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_KEY: ${{ vars.VITE_SUPABASE_KEY }}
 
       - uses: actions/upload-pages-artifact@v3
         with:
