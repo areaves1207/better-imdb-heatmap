@@ -1,4 +1,4 @@
--- Episode Heatmap schema for Supabase (Postgres).
+-- IMDb Heatmap schema for Supabase (Postgres).
 -- Paste into the Supabase SQL Editor and run once.
 --
 -- Sizes with the default filter (shows with 1,000+ votes): ~12.7k shows, ~525k episodes,

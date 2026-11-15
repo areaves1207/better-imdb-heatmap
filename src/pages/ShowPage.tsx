@@ -9,7 +9,7 @@ export function ShowPage() {
   const poster = usePoster(show.status === 'ready' ? show.data.id : undefined)
 
   useEffect(() => {
-    document.title = show.status === 'ready' ? `${show.data.title} · Episode Heatmap` : 'Episode Heatmap'
+    document.title = show.status === 'ready' ? `${show.data.title} · IMDb Heatmap` : 'IMDb Heatmap'
   }, [show])
 
   if (show.status === 'loading') return <p className="status">Loading…</p>

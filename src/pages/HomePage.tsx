@@ -7,7 +7,7 @@ export function HomePage() {
   const popular = usePopularShows()
 
   useEffect(() => {
-    document.title = 'Episode Heatmap'
+    document.title = 'IMDb Heatmap'
   }, [])
 
   return (

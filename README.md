@@ -1,4 +1,4 @@
-# Episode Heatmap
+# IMDb Heatmap
 
 A heatmap of IMDb episode ratings for TV shows, season by season. Built with Vite, React and TypeScript, with data in Supabase and the site hosted on GitHub Pages.
 

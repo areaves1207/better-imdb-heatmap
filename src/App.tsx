@@ -13,9 +13,9 @@ export default function App() {
   return (
     <div className="app">
       <header className={`topbar${onHome ? '' : ' with-search'}`}>
-        <Link to="/" className="brand" aria-label="Episode Heatmap home">
+        <Link to="/" className="brand" aria-label="IMDb Heatmap home">
           <span className="brand-mark" aria-hidden />
-          <span className="brand-name">Episode Heatmap</span>
+          <span className="brand-name">IMDb Heatmap</span>
         </Link>
         {!onHome && <SearchBox placeholder="Search shows…" />}
         <ThemeToggle />
