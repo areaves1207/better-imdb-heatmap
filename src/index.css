@@ -141,10 +141,10 @@ main {
 }
 
 .brand-mark {
-  width: 20px;
-  height: 20px;
-  border-radius: 4px;
-  background: linear-gradient(135deg, var(--r-2) 0 25%, var(--r-5) 25% 50%, var(--r-7) 50% 75%, var(--r-9) 75%);
+  width: 28px;
+  height: 28px;
+  border-radius: 5px;
+  flex-shrink: 0;
 }
 
 /* Search */

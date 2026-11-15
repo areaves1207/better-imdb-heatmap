@@ -14,7 +14,13 @@ export default function App() {
     <div className="app">
       <header className={`topbar${onHome ? '' : ' with-search'}`}>
         <Link to="/" className="brand" aria-label="IMDb Heatmap home">
-          <span className="brand-mark" aria-hidden />
+          <img
+            className="brand-mark"
+            src={`${import.meta.env.BASE_URL}imdb-heatmap-logo.png`}
+            alt=""
+            width={28}
+            height={28}
+          />
           <span className="brand-name">IMDb Heatmap</span>
         </Link>
         {!onHome && <SearchBox placeholder="Search shows…" />}
