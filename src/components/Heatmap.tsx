@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import type { Episode, Season } from '../types.ts'
 import { BINS, binFor } from '../scale.ts'
 import { formatVotes } from '../data.ts'
+import { PALETTES, usePalette, type Palette } from '../palette.ts'
 
 type Orientation = 'seasons-columns' | 'seasons-rows'
 
@@ -28,6 +29,7 @@ export function Heatmap({ seasons }: { seasons: Season[] }) {
     seasons.length > maxEpisodes ? 'seasons-rows' : 'seasons-columns',
   )
   const [showAverages, setShowAverages] = useState(true)
+  const [palette, setPalette] = usePalette()
   const [hover, setHover] = useState<Hover | null>(null)
   const lastPointer = useRef<string>('mouse')
 
@@ -120,6 +122,20 @@ export function Heatmap({ seasons }: { seasons: Season[] }) {
         <label className="toggle">
           <input type="checkbox" checked={showAverages} onChange={(e) => setShowAverages(e.target.checked)} />
           Season averages
+        </label>
+        <label className="toggle">
+          Colors
+          <select
+            className="palette-select"
+            value={palette}
+            onChange={(e) => setPalette(e.target.value as Palette)}
+          >
+            {PALETTES.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.label}
+              </option>
+            ))}
+          </select>
         </label>
       </div>
 

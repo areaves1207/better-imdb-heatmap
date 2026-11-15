@@ -1,5 +1,5 @@
-// Diverging color scale for ratings: red arm (worse) <- neutral gray <- blue arm (better).
-// Red/blue rather than red/green so it stays readable with red-green color blindness.
+// Diverging color scale for ratings: red arm (worse) <- neutral gray -> green or blue arm (better).
+// The actual colors are CSS variables in index.css; src/palette.ts switches between them.
 // Bins are tuned to IMDb episode ratings, which cluster around 7.5–8.
 
 export interface Bin {

@@ -12,16 +12,17 @@
   --hover: #262624;
   --shadow: rgb(0 0 0 / 0.5);
 
-  /* Rating scale: red arm (worse) -> neutral -> blue arm (better) */
+  /* Rating scale: red arm (worse) -> neutral -> green arm (better).
+     data-palette="blue" swaps the green arm for blue (see below). */
   --r-1: #8f2425;
   --r-2: #d43d3c;
   --r-3: #ec8a86;
   --r-4: #f6c4c0;
   --r-5: #c9c8c1;
-  --r-6: #b7d3f6;
-  --r-7: #6da7ec;
-  --r-8: #256abf;
-  --r-9: #104281;
+  --r-6: #b8e0b0;
+  --r-7: #6cc070;
+  --r-8: #23853a;
+  --r-9: #0f5a26;
 
   --cell-w: 44px;
   --cell-h: 32px;
@@ -45,6 +46,14 @@
   --hover: #f0efec;
   --shadow: rgb(0 0 0 / 0.12);
   --r-5: #e6e5e0;
+}
+
+/* Color-blind friendly palette: blue instead of green for the "better" arm */
+:root[data-palette='blue'] {
+  --r-6: #b7d3f6;
+  --r-7: #6da7ec;
+  --r-8: #256abf;
+  --r-9: #104281;
 }
 
 * {
@@ -316,6 +325,15 @@ main {
   align-items: center;
   font-size: 0.9em;
   color: var(--ink-2);
+}
+
+.palette-select {
+  font: inherit;
+  padding: 5px 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
 }
 
 .heatmap-scroll {

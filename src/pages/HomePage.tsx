@@ -13,8 +13,8 @@ export function HomePage() {
   return (
     <div className="home">
       <section className="hero">
-        <h1>Every episode, at a glance</h1>
-        <p>Search a TV show to see a heatmap of its IMDb episode ratings, season by season.</p>
+        <h1>IMDb Heatmaps</h1>
+        <p>Search a TV show to see a heatmap of its IMDb episode ratings</p>
         <SearchBox autoFocus />
       </section>
 
