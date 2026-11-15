@@ -2,7 +2,13 @@ import { useId, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { configError, formatYears, useSearch } from '../data.ts'
 
-export function SearchBox({ autoFocus = false }: { autoFocus?: boolean }) {
+export function SearchBox({
+  autoFocus = false,
+  placeholder = 'Search a TV show, e.g. Breaking Bad',
+}: {
+  autoFocus?: boolean
+  placeholder?: string
+}) {
   const navigate = useNavigate()
   const listId = useId()
   const [query, setQuery] = useState('')
@@ -45,7 +51,7 @@ export function SearchBox({ autoFocus = false }: { autoFocus?: boolean }) {
         aria-controls={listId}
         aria-activedescendant={showList && results.length ? `${listId}-${active}` : undefined}
         aria-label="Search TV shows"
-        placeholder={configError ? 'Search unavailable' : 'Search a TV show, e.g. Breaking Bad'}
+        placeholder={configError ? 'Search unavailable' : placeholder}
         disabled={!!configError}
         autoFocus={autoFocus}
         value={query}

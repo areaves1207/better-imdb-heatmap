@@ -1,5 +1,6 @@
 import { Link, Route, Routes, useLocation } from 'react-router'
 import { SearchBox } from './components/SearchBox.tsx'
+import { ThemeToggle } from './components/ThemeToggle.tsx'
 import { useRefreshedAt } from './data.ts'
 import { HomePage } from './pages/HomePage.tsx'
 import { ShowPage } from './pages/ShowPage.tsx'
@@ -11,12 +12,13 @@ export default function App() {
 
   return (
     <div className="app">
-      <header className="topbar">
-        <Link to="/" className="brand">
+      <header className={`topbar${onHome ? '' : ' with-search'}`}>
+        <Link to="/" className="brand" aria-label="Episode Heatmap home">
           <span className="brand-mark" aria-hidden />
-          Episode Heatmap
+          <span className="brand-name">Episode Heatmap</span>
         </Link>
-        {!onHome && <SearchBox />}
+        {!onHome && <SearchBox placeholder="Search shows…" />}
+        <ThemeToggle />
       </header>
 
       <main>

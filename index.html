@@ -1,11 +1,21 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Heatmaps of IMDb episode ratings for TV shows, season by season." />
+    <meta name="theme-color" content="#1a1a19" />
     <title>Episode Heatmap</title>
+    <script>
+      // Apply the saved theme before the page paints, so light-mode users don't see a dark flash.
+      try {
+        if (localStorage.getItem('theme') === 'light') {
+          document.documentElement.dataset.theme = 'light'
+          document.querySelector('meta[name="theme-color"]').content = '#fcfcfb'
+        }
+      } catch {}
+    </script>
   </head>
   <body>
     <div id="root"></div>

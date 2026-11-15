@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { Episode, Season } from '../types.ts'
 import { BINS, binFor } from '../scale.ts'
 import { formatVotes } from '../data.ts'
@@ -8,9 +8,16 @@ type Orientation = 'seasons-columns' | 'seasons-rows'
 interface Hover {
   season: number
   ep: Episode
+  /** Tooltip anchor in viewport coordinates */
   x: number
   y: number
+  /** Show the tooltip under the cell (when there's no room above) */
+  below: boolean
+  /** Opened by a tap: a second tap on the same cell follows the link */
+  touch: boolean
 }
+
+const TOOLTIP_HALF_WIDTH = 138 // half of max-width 260 + margin
 
 const average = (eps: Episode[]) => eps.reduce((s, e) => s + e.rating, 0) / eps.length
 
@@ -22,6 +29,23 @@ export function Heatmap({ seasons }: { seasons: Season[] }) {
   )
   const [showAverages, setShowAverages] = useState(true)
   const [hover, setHover] = useState<Hover | null>(null)
+  const lastPointer = useRef<string>('mouse')
+
+  // A tapped tooltip stays open until you tap elsewhere or scroll
+  const touchTip = hover?.touch ?? false
+  useEffect(() => {
+    if (!touchTip) return
+    const close = (e: Event) => {
+      if (e.type === 'pointerdown' && (e.target as Element).closest?.('a.cell')) return
+      setHover(null)
+    }
+    document.addEventListener('pointerdown', close)
+    window.addEventListener('scroll', close, true)
+    return () => {
+      document.removeEventListener('pointerdown', close)
+      window.removeEventListener('scroll', close, true)
+    }
+  }, [touchTip])
 
   const byColumns = orientation === 'seasons-columns'
   const episodeIdx = Array.from({ length: maxEpisodes }, (_, i) => i)
@@ -31,23 +55,36 @@ export function Heatmap({ seasons }: { seasons: Season[] }) {
     if (!ep) return <div key={`${season.number}-${i}`} className="cell empty" aria-hidden />
     const bin = binFor(ep.rating)
     const label = `Season ${season.number} episode ${ep.n}, ${ep.title}: ${ep.rating.toFixed(1)} from ${ep.votes.toLocaleString()} votes`
-    const showTip = (el: HTMLElement) => {
+    const showTip = (el: HTMLElement, touch: boolean) => {
       const r = el.getBoundingClientRect()
-      setHover({ season: season.number, ep, x: r.left + r.width / 2, y: r.top })
+      const vw = document.documentElement.clientWidth
+      // keep the tooltip on screen near the left/right edges of a phone
+      const x = Math.min(Math.max(r.left + r.width / 2, TOOLTIP_HALF_WIDTH), vw - TOOLTIP_HALF_WIDTH)
+      const below = r.top < 110
+      setHover({ season: season.number, ep, x, y: below ? r.bottom : r.top, below, touch })
     }
     return (
       <a
         key={ep.id}
-        className={`cell${bin.darkFill ? ' on-dark' : ''}`}
+        className={`cell${bin.darkFill ? ' on-dark' : ''}${hover?.ep.id === ep.id ? ' active' : ''}`}
         style={{ background: bin.fill }}
         href={`https://www.imdb.com/title/${ep.id}/`}
         target="_blank"
         rel="noreferrer"
         aria-label={label}
-        onMouseEnter={(e) => showTip(e.currentTarget)}
-        onFocus={(e) => showTip(e.currentTarget)}
-        onMouseLeave={() => setHover(null)}
-        onBlur={() => setHover(null)}
+        onPointerDown={(e) => (lastPointer.current = e.pointerType)}
+        // pointer (not mouse) events, so a tap doesn't fake a hover
+        onPointerEnter={(e) => e.pointerType === 'mouse' && showTip(e.currentTarget, false)}
+        onPointerLeave={(e) => e.pointerType === 'mouse' && setHover(null)}
+        onFocus={(e) => e.currentTarget.matches(':focus-visible') && showTip(e.currentTarget, false)}
+        onBlur={() => !touchTip && setHover(null)}
+        onClick={(e) => {
+          // On touch screens the first tap previews the episode, the second opens IMDb
+          if (lastPointer.current !== 'mouse' && hover?.ep.id !== ep.id) {
+            e.preventDefault()
+            showTip(e.currentTarget, true)
+          }
+        }}
       >
         {ep.rating.toFixed(1)}
       </a>
@@ -122,7 +159,11 @@ export function Heatmap({ seasons }: { seasons: Season[] }) {
       <Legend />
 
       {hover && (
-        <div className="tooltip" role="tooltip" style={{ left: hover.x, top: hover.y }}>
+        <div
+          className={`tooltip${hover.below ? ' below' : ''}`}
+          role="tooltip"
+          style={{ left: hover.x, top: hover.y }}
+        >
           <div className="tooltip-head">
             S{hover.season} · E{hover.ep.n}
           </div>
@@ -130,6 +171,7 @@ export function Heatmap({ seasons }: { seasons: Season[] }) {
           <div className="tooltip-stats">
             <strong>{hover.ep.rating.toFixed(1)}</strong> · {formatVotes(hover.ep.votes)} votes
           </div>
+          {hover.touch && <div className="tooltip-hint">Tap again to open on IMDb</div>}
         </div>
       )}
     </div>
