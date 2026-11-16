@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "IMDb Heatmap",
+  "version": "0.1.0",
+  "description": "Check IMDb ratings for every episode of a TV show, season by season, in one click.",
+  "action": {
+    "default_title": "IMDb Heatmap",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  }
+}

@@ -1,4 +1,4 @@
-import { Link, Route, Routes, useLocation } from 'react-router'
+import { Link, Route, Routes, useLocation, useNavigate } from 'react-router'
 import { SearchBox } from './components/SearchBox.tsx'
 import { ThemeToggle } from './components/ThemeToggle.tsx'
 import { useRefreshedAt } from './data.ts'
@@ -7,6 +7,7 @@ import { ShowPage } from './pages/ShowPage.tsx'
 
 export default function App() {
   const { pathname } = useLocation()
+  const navigate = useNavigate()
   const refreshed = useRefreshedAt()
   const onHome = pathname === '/'
 
@@ -23,7 +24,7 @@ export default function App() {
           />
           <span className="brand-name">IMDb Heatmap</span>
         </Link>
-        {!onHome && <SearchBox placeholder="Search shows…" />}
+        {!onHome && <SearchBox placeholder="Search shows…" onSelect={(id) => navigate(`/show/${id}`)} />}
         <ThemeToggle />
       </header>
 

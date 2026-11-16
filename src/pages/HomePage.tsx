@@ -1,10 +1,11 @@
 import { useEffect } from 'react'
-import { Link } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 import { SearchBox } from '../components/SearchBox.tsx'
 import { formatYears, usePopularShows } from '../data.ts'
 
 export function HomePage() {
   const popular = usePopularShows()
+  const navigate = useNavigate()
 
   useEffect(() => {
     document.title = 'IMDb Heatmap'
@@ -15,7 +16,7 @@ export function HomePage() {
       <section className="hero">
         <h1>IMDb Heatmaps</h1>
         <p>Search a TV show to see a heatmap of its IMDb episode ratings</p>
-        <SearchBox autoFocus />
+        <SearchBox autoFocus onSelect={(id) => navigate(`/show/${id}`)} />
       </section>
 
       <section>

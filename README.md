@@ -54,6 +54,30 @@ SUPABASE_DB_URL=postgresql://postgres.<project-ref>:<password>@aws-0-<region>.po
 
 then run `npm run data`. It downloads ~270 MB into `.cache/` (reused for 20 hours). Options: `DRY_RUN=1` to build without touching the database, `MIN_SERIES_VOTES=500` to include more shows, `FORCE_DOWNLOAD=1` to refetch.
 
+## Chrome extension
+
+A compact toolbar popup (fixed 360×480) for checking episode ratings while you watch. It lives in [`extension/`](extension/) with its own layout and components; it shares only the colors/fonts (`src/tokens.css`), the data client, the color scale and the search box with the site.
+
+- The start page shows your 6 most recent shows in a 3×2 grid. The logo opens the website; ← on a show goes back to the start page.
+- Click a season label (S1, S2…) to show only that season, as a list with episode titles.
+- Click an episode for a large view of its score, with ‹ › (or the arrow keys) to step through episodes and a link to IMDb.
+- Each show remembers the season you last selected.
+- It needs no browser permissions; it only talks to Supabase (and the IMDb/site links you click).
+
+**Build and install (unpacked):**
+
+```bash
+npm run build:extension   # writes dist-extension/, using the Supabase URL/key from .env
+```
+
+1. Open `chrome://extensions` and turn on **Developer mode** (top right).
+2. Click **Load unpacked** and choose the `dist-extension` folder.
+3. Pin it from the puzzle-piece menu so the icon stays in the toolbar.
+
+After rebuilding, click the reload icon on the extension's card in `chrome://extensions`. It also works in Edge and Brave the same way.
+
+`npm run dev:extension` serves the popup at http://localhost:5174/popup.html for quick styling work.
+
 ## Data license
 
 IMDb's datasets are for personal and non-commercial use only. The footer credit ("Information courtesy of IMDb…") is required by those terms. Keep it if you change the layout.

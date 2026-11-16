@@ -1,15 +1,16 @@
 import { useId, useState } from 'react'
-import { useNavigate } from 'react-router'
 import { configError, formatYears, useSearch } from '../data.ts'
 
+/** Search-as-you-type for shows. onSelect receives the chosen show's IMDb id. */
 export function SearchBox({
+  onSelect,
   autoFocus = false,
   placeholder = 'Search a TV show, e.g. Breaking Bad',
 }: {
+  onSelect: (id: string) => void
   autoFocus?: boolean
   placeholder?: string
 }) {
-  const navigate = useNavigate()
   const listId = useId()
   const [query, setQuery] = useState('')
   const [active, setActive] = useState(0)
@@ -21,7 +22,7 @@ export function SearchBox({
   const go = (id: string) => {
     setQuery('')
     setOpen(false)
-    navigate(`/show/${id}`)
+    onSelect(id)
   }
 
   const onKeyDown = (e: React.KeyboardEvent) => {

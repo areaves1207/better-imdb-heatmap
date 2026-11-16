@@ -27,3 +27,5 @@ dist-ssr
 .cache/
 
 .env
+# Built Chrome extension (load this folder unpacked)
+dist-extension/
