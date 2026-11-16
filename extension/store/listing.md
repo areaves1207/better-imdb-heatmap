@@ -53,7 +53,7 @@ Certify all three statements:
 - I do not use or transfer user data for purposes that are unrelated to my item's single purpose
 - I do not use or transfer user data to determine creditworthiness or for lending purposes
 
-**Privacy policy URL:** https://heatmap.aidanreaves.com/privacy
+**Privacy policy URL:** https://heatmap.aidanreaves.com/privacy/
 
 ## Distribution tab
 
