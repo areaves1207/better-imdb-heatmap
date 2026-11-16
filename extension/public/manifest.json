@@ -1,10 +1,10 @@
 {
   "manifest_version": 3,
-  "name": "IMDb Heatmap",
+  "name": "TV Heatmap",
   "version": "0.1.0",
-  "description": "Check IMDb ratings for every episode of a TV show, season by season, in one click.",
+  "description": "See how every episode of a TV show rates, season by season, as a color-coded heatmap of IMDb ratings.",
   "action": {
-    "default_title": "IMDb Heatmap",
+    "default_title": "TV Heatmap",
     "default_popup": "popup.html",
     "default_icon": {
       "16": "icons/icon-16.png",

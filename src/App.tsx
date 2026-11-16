@@ -3,6 +3,7 @@ import { SearchBox } from './components/SearchBox.tsx'
 import { ThemeToggle } from './components/ThemeToggle.tsx'
 import { useRefreshedAt } from './data.ts'
 import { HomePage } from './pages/HomePage.tsx'
+import { PrivacyPage } from './pages/PrivacyPage.tsx'
 import { ShowPage } from './pages/ShowPage.tsx'
 
 export default function App() {
@@ -32,6 +33,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/show/:id" element={<ShowPage />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
           <Route
             path="*"
             element={
@@ -55,9 +57,12 @@ export default function App() {
           </a>
           .
         </p>
-        {refreshed.status === 'ready' && refreshed.data && (
-          <p>Ratings updated {refreshed.data.toLocaleDateString()}.</p>
-        )}
+        <p>
+          {refreshed.status === 'ready' && refreshed.data && (
+            <>Ratings updated {refreshed.data.toLocaleDateString()} · </>
+          )}
+          <Link to="/privacy">Privacy</Link>
+        </p>
       </footer>
     </div>
   )

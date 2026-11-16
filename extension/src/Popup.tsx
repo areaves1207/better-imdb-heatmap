@@ -37,7 +37,7 @@ export function Popup() {
     <div className="popup">
       <header className="bar">
         <a className="logo" href={SITE_URL} target="_blank" rel="noreferrer" title="Open heatmap.aidanreaves.com">
-          <img src="icons/icon-128.png" alt="IMDb Heatmap" width={26} height={26} />
+          <img src="icons/icon-128.png" alt="TV Heatmap" width={26} height={26} />
         </a>
         <SearchBox onSelect={setShowId} autoFocus={showId === null} placeholder="Search a show…" />
         <ThemeToggle />

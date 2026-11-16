@@ -78,6 +78,8 @@ After rebuilding, click the reload icon on the extension's card in `chrome://ext
 
 `npm run dev:extension` serves the popup at http://localhost:5174/popup.html for quick styling work.
 
+**Chrome Web Store:** `npm run zip:extension` builds and packs `tv-heatmap-<version>.zip` for upload. The listing text, screenshots and promo tile are in [`extension/store/`](extension/store/listing.md); the privacy policy is the website's `/privacy` page.
+
 ## Data license
 
 IMDb's datasets are for personal and non-commercial use only. The footer credit ("Information courtesy of IMDb…") is required by those terms. Keep it if you change the layout.

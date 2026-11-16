@@ -29,3 +29,6 @@ dist-ssr
 .env
 # Built Chrome extension (load this folder unpacked)
 dist-extension/
+
+# Packaged extension for the Chrome Web Store
+tv-heatmap-*.zip
